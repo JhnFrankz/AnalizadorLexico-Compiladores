@@ -7,8 +7,6 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class Home extends JFrame {
 
@@ -58,11 +56,15 @@ public class Home extends JFrame {
 
         btnAnalise = new JButton("Analizar");
         btnAnalise.setBounds(10, 190, 89, 23);
+        btnAnalise.setForeground(Color.BLACK);
+        btnAnalise.setBackground(Color.WHITE);
         btnAnalise.addActionListener(this::btnAnaliseActionPerformed);
         contentPane.add(btnAnalise);
 
         btnClear = new JButton("Limpiar");
         btnClear.setBounds(109, 190, 89, 23);
+        btnClear.setForeground(Color.BLACK);
+        btnClear.setBackground(Color.WHITE);
         btnClear.addActionListener(this::btnClearActionPerformed);
         contentPane.add(btnClear);
 
@@ -86,6 +88,7 @@ public class Home extends JFrame {
                         "Componente Léxico", "Lexema"
                 }
         ));
+        tblResult.setEnabled(false);
         scrollPane2.setViewportView(tblResult);
     }
 
@@ -115,7 +118,8 @@ public class Home extends JFrame {
     private void analize() {
         String input = txtInput.getText();
 
-        ArrayList<String> palabrasReservadas = new ArrayList<>(Arrays.asList("abstract", "boolean", "break", "byte", "case", "catch", "char",
+        ArrayList<String> palabrasReservadas = new ArrayList<>(Arrays.asList("abstract", "boolean",
+                "break", "byte", "case", "catch", "char",
                 "class", "continue", "default", "do", "double", "else", "enum", "extends", "final",
                 "finally", "float", "for", "if", "implements", "import", "instanceof", "int", "interface",
                 "long", "new", "null", "package", "private", "protected", "public", "return", "short",
@@ -160,8 +164,8 @@ public class Home extends JFrame {
                     }
                     model.addRow(new Object[]{lexema, "Número"});
                     i--;
-                } else if (c == ' ') {
-                    //model.addRow(new Object[]{" ", "Espacio"});
+                /*} else if (c == ' ') {
+                    //model.addRow(new Object[]{" ", "Espacio"}); */
                 } else if (c == '+') {
                     String lexema = "";
                     lexema += c;
@@ -193,14 +197,48 @@ public class Home extends JFrame {
                     if (c == '-') {
                         lexema += c;
                         model.addRow(new Object[]{lexema, "Menos menos"});
+                    } else if (c == '=') {
+                        lexema += c;
+                        model.addRow(new Object[]{lexema, "Menos igual"});
                     } else {
                         model.addRow(new Object[]{lexema, "Resta"});
                         i--;
                     }
                 } else if (c == '*') {
-                    model.addRow(new Object[]{"*", "Multiplicación"});
+                    String lexema = "";
+                    lexema += c;
+                    i++;
+                    if (i < input.length()) {
+                        c = input.charAt(i);
+                    } else {
+                        break;
+                    }
+                    if (c == '*') {
+                        lexema += c;
+                        model.addRow(new Object[]{lexema, "Potencia"});
+                    } else if (c == '=') {
+                        lexema += c;
+                        model.addRow(new Object[]{lexema, "Por igual"});
+                    } else {
+                        model.addRow(new Object[]{lexema, "Multiplicación"});
+                        i--;
+                    }
                 } else if (c == '/') {
-                    model.addRow(new Object[]{"/", "División"});
+                    String lexema = "";
+                    lexema += c;
+                    i++;
+                    if (i < input.length()) {
+                        c = input.charAt(i);
+                    } else {
+                        break;
+                    }
+                    if (c == '=') {
+                        lexema += c;
+                        model.addRow(new Object[]{lexema, "Entre igual"});
+                    } else {
+                        model.addRow(new Object[]{lexema, "División"});
+                        i--;
+                    }
                 } else if (c == '=') {
                     String lexema = "";
                     lexema += c;
@@ -212,7 +250,20 @@ public class Home extends JFrame {
                     }
                     if (c == '=') {
                         lexema += c;
-                        model.addRow(new Object[]{lexema, "Igualdad"});
+                        i++;
+                        if (i < input.length()) {
+                            c = input.charAt(i);
+                        } else {
+                            break;
+                        }
+                        if (c == '=') {
+                            lexema += c;
+                            model.addRow(new Object[]{lexema, "Igualdad referencia"});
+                        } else {
+                            lexema += c;
+                            model.addRow(new Object[]{lexema, "Igualdad"});
+                            i--;
+                        }
                     } else {
                         model.addRow(new Object[]{lexema, "Asignación"});
                         i--;
@@ -260,8 +311,19 @@ public class Home extends JFrame {
                     }
                     if (c == '=') {
                         lexema += c;
-                        model.addRow(new Object[]{lexema, "Diferente que"});
-                        //model.addRow(new Object[]{"!", "No igual"});
+                        i++;
+                        if (i < input.length()) {
+                            c = input.charAt(i);
+                        } else {
+                            break;
+                        }
+                        if (c == '=') {
+                            lexema += c;
+                            model.addRow(new Object[]{lexema, "Desigualdad referencia"});
+                        } else {
+                            model.addRow(new Object[]{lexema, "Diferente de"});
+                            i--;
+                        }
                     } else {
                         model.addRow(new Object[]{lexema, "Negación"});
                         i--;
@@ -298,6 +360,22 @@ public class Home extends JFrame {
                         model.addRow(new Object[]{lexema, "Operador O Binario"});
                         i--;
                     }
+                } else if (c == '^') {
+                    String lexema = "";
+                    lexema += c;
+                    i++;
+                    if (i < input.length()) {
+                        c = input.charAt(i);
+                    } else {
+                        break;
+                    }
+                    if (c == '=') {
+                        lexema += c;
+                        model.addRow(new Object[]{lexema, "XOR igual"});
+                    } else {
+                        model.addRow(new Object[]{lexema, "Operador XOR"});
+                        i--;
+                    }
                 } else if (c == ';') {
                     model.addRow(new Object[]{";", "Punto y coma"});
                 } else if (c == '(') {
@@ -313,15 +391,56 @@ public class Home extends JFrame {
                 } else if (c == ']') {
                     model.addRow(new Object[]{"]", "Corchete cerrado"});
                 } else if (c == '"') {
-                    model.addRow(new Object[]{"\"", "Comillas dobles"});
+                    String lexema = "";
+                    lexema += c;
+                    i++;
+                    if (i < input.length()) {
+                        c = input.charAt(i);
+                    } else {
+                        break;
+                    }
+                    if (c == '"') {
+                        lexema += c;
+                        i++;
+                        if (i < input.length()) {
+                            c = input.charAt(i);
+                        } else {
+                            break;
+                        }
+                        if (c == '"') {
+                            lexema += c;
+                            model.addRow(new Object[]{lexema, "Comillas multiples"});
+                        } else {
+                            i--;
+                        }
+                    } else {
+                        model.addRow(new Object[]{lexema, "Comillas dobles"});
+                        i--;
+                    }
                 } else if (c == '\'') {
                     model.addRow(new Object[]{"'", "Comillas simples"});
+                } else if (c == '´') {
+                    model.addRow(new Object[]{"'", "Comillas invertidas"});
                 } else if (c == ',') {
                     model.addRow(new Object[]{",", "Coma"});
                 } else if (c == ':') {
                     model.addRow(new Object[]{":", "Dos puntos"});
                 } else if (c == '.') {
-                    model.addRow(new Object[]{".", "Punto"});
+                    String lexema = "";
+                    lexema += c;
+                    i++;
+                    if (i < input.length()) {
+                        c = input.charAt(i);
+                    } else {
+                        break;
+                    }
+                    if (c == '.') {
+                        lexema += c;
+                        model.addRow(new Object[]{lexema, "Rango"});
+                    } else {
+                        model.addRow(new Object[]{lexema, "Punto"});
+                        i--;
+                    }
                 } else if (c == '_') {
                     String lexema = "";
                     while (c == '_') {
@@ -335,30 +454,24 @@ public class Home extends JFrame {
                     }
                     model.addRow(new Object[]{lexema, "Guion bajo"});
                     i--;
-                } else if (c == '\n') {
-                    //model.addRow(new Object[]{"\n", "Salto de línea"});
-                } else if (c == '\t') {
-                    //model.addRow(new Object[]{"\t", "Tabulador"});
-                } else if (c == '\r') {
-                    //model.addRow(new Object[]{"\r", "Retorno de carro"});
-                } else if (c == '\b') {
-                    //model.addRow(new Object[]{"\b", "Retroceso"});
-                } else if (c == '\f') {
-                    //model.addRow(new Object[]{"\f", "Fin de página"});
-                } else if (c == '\u0000') {
-                    model.addRow(new Object[]{"\u0000", "Nulo"});
-                } else if (c == '\u0001') {
-                    model.addRow(new Object[]{"\u0001", "Inicio de caracter"});
-                } else if (c == '\u0002') {
-                    model.addRow(new Object[]{"\u0002", "Fin de caracter"});
-                } else if (c == '\u0003') {
-                    model.addRow(new Object[]{"\u0003", "Inicio de cadena"});
-                } else if (c == '\u0004') {
-                    model.addRow(new Object[]{"\u0004", "Fin de cadena"});
-                } else if (c == '\u0005') {
-                    model.addRow(new Object[]{"\u0005", "Inicio de comentario"});
-                } else if (c == '\u0006') {
-                    model.addRow(new Object[]{"\u0006", "Fin de comentario"});
+                } else if (c == '¿') {
+                    model.addRow(new Object[]{"¿", "Abre interrogación"});
+                } else if (c == '?') {
+                    String lexema = "";
+                    lexema += c;
+                    i++;
+                    if (i < input.length()) {
+                        c = input.charAt(i);
+                    } else {
+                        break;
+                    }
+                    if (c == ':') {
+                        lexema += c;
+                        model.addRow(new Object[]{lexema, "Operador ternario"});
+                    } else {
+                        model.addRow(new Object[]{lexema, "Cerrar interrogación"});
+                        i--;
+                    }
                 }
             }
         }
