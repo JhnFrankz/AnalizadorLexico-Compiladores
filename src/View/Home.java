@@ -8,6 +8,7 @@ import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+//______________________1______________________
 public class Home extends JFrame {
 
     private final JPanel contentPane;
@@ -42,6 +43,7 @@ public class Home extends JFrame {
         contentPane.setLayout(null);
         setLocationRelativeTo(null);
         setResizable(false);
+        //_____________________2___________________________
 
         lblInpunt = new JLabel("Ingrese el código a analizar:");
         lblInpunt.setBounds(10, 11, 200, 14);
@@ -92,6 +94,7 @@ public class Home extends JFrame {
         scrollPane2.setViewportView(tblResult);
     }
 
+    //_______________________________3________________________________
     private void btnAnaliseActionPerformed(ActionEvent evt) {
         analize();
     }
@@ -125,12 +128,15 @@ public class Home extends JFrame {
                 "long", "new", "null", "package", "private", "protected", "public", "return", "short",
                 "static", "super", "switch", "this", "throw", "throws", "try", "void", "while"));
 
+        //_____________________________4__________________________________
+
         if (input.isEmpty()) {
             JOptionPane.showMessageDialog(null, "Ingrese el código a analizar",
                     "Error", JOptionPane.ERROR_MESSAGE);
         } else {
             DefaultTableModel model = (DefaultTableModel) tblResult.getModel();
             model.setRowCount(0);
+
             for (int i = 0; i < input.length(); i++) {
                 char c = input.charAt(i);
 
@@ -151,6 +157,7 @@ public class Home extends JFrame {
                     } else {
                         model.addRow(new Object[]{lexema, "Identificador"});
                     }
+                    //_______________________________5________________________________
                 } else if (Character.isDigit(c)) {
                     String lexema = "";
                     while (Character.isDigit(c)) {
@@ -164,8 +171,6 @@ public class Home extends JFrame {
                     }
                     model.addRow(new Object[]{lexema, "Número"});
                     i--;
-                /*} else if (c == ' ') {
-                    //model.addRow(new Object[]{" ", "Espacio"}); */
                 } else if (c == '+') {
                     String lexema = "";
                     lexema += c;
@@ -177,12 +182,12 @@ public class Home extends JFrame {
                     }
                     if (c == '+') {
                         lexema += c;
-                        model.addRow(new Object[]{lexema, "Más mas"});
+                        model.addRow(new Object[]{lexema, "Más mas"}); // ++
                     } else if (c == '=') {
                         lexema += c;
-                        model.addRow(new Object[]{lexema, "Más igual"});
+                        model.addRow(new Object[]{lexema, "Más igual"}); //+=
                     } else {
-                        model.addRow(new Object[]{lexema, "Suma"});
+                        model.addRow(new Object[]{lexema, "Suma"}); //+
                         i--;
                     }
                 } else if (c == '-') {
